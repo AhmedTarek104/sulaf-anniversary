@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Anniversary Sulaf ❤️</title>
+
+<style>
+  :root{
+    --bg1:#ff9a9e;
+    --bg2:#ff4d6d;
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+    color:#fff;
+    overflow-x:hidden;
+  }
+
+  /* Fireworks behind everything */
+  canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* Hearts above fireworks but behind content */
+  .hearts{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .heart{
+    position:absolute;
+    bottom:-40px;
+    font-size:22px;
+    animation: floatUp linear forwards;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25));
+    opacity:0.95;
+  }
+  @keyframes floatUp{
+    from{ transform: translateY(0) scale(0.9); opacity:0; }
+    10%{ opacity:1; }
+    to{ transform: translateY(-115vh) scale(1.35); opacity:0; }
+  }
+
+  /* Content on top */
+  .wrap{
+    position:relative;
+    z-index:2;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+
+  .card{
+    width:min(760px, 92vw);
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 18px;
+    padding: 22px 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 18px 55px rgba(0,0,0,0.25);
+    text-align:center;
+  }
+
+  h1{
+    margin: 6px 0 14px 0;
+    font-size: clamp(26px, 4vw, 44px);
+    text-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  }
+
+  .photo{
+    width: min(360px, 88vw);
+    border-radius:16px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    border: 3px solid rgba(255,255,255,0.35);
+    margin: 8px 0 14px 0;
+  }
+
+  .line-ar{
+    margin: 10px 0 12px 0;
+    font-size: 16px;
+    opacity: 0.98;
+  }
+
+  p{
+    margin: 0;
+    line-height: 1.85;
+    font-size: 16px;
+    text-shadow: 0 8px 20px rgba(0,0,0,0.22);
+  }
+
+  .hint{
+    margin-top: 12px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Music starts only after YES -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="./music.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="fireworks"></canvas>
+<div class="hearts" id="hearts"></div>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Happy Anniversary, Sulaf ❤️🎉</h1>
+    <img class="photo" src="us.jpg" alt="Us together" />
+
+    <div class="line-ar">سنين ومرت زي الثواني في حبك انت ✨</div>
+
+    <p>
+      From the moment you came into my life,<br>
+      everything became softer, brighter, and more beautiful.<br><br>
+
+      You’re my calm, my happiness, my safe place,<br>
+      and the best part of every single day. 💕<br><br>
+
+      If I could choose again, in every lifetime,<br>
+      in every world, in every version of me…<br>
+      I would still choose you. Every time. 💖<br><br>
+
+      Thank you for loving me, for staying,<br>
+      and for being you.<br><br>
+
+      I love you more than yesterday,<br>
+      and less than tomorrow. ♾️❤️
+    </p>
+
+    <div class="hint">Tap anywhere for extra fireworks 🎆 (music may need one tap on phones)</div>
+  </div>
+</div>
+
+<script>
+  // ---- MUSIC (starts on this page only) ----
+  const music = document.getElementById("bgMusic");
+  window.addEventListener("load", () => {
+    music.play().catch(() => {
+      // Autoplay blocked on some phones; first tap will start it
+      document.body.addEventListener("click", () => music.play(), { once: true });
+    });
+  });
+
+  // ---- HEARTS ----
+  const hearts = document.getElementById("hearts");
+  function spawnHeart(){
+    const el = document.createElement("div");
+    el.className = "heart";
+    el.textContent = "❤️";
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.fontSize = (18 + Math.random()*22) + "px";
+    el.style.animationDuration = (4 + Math.random()*4) + "s";
+    hearts.appendChild(el);
+    setTimeout(() => el.remove(), 8000);
+  }
+  setInterval(spawnHeart, 260);
+
+  // ---- FIREWORKS (behind everything) ----
+  const canvas = document.getElementById("fireworks");
+  const ctx = canvas.getContext("2d");
+  let W, H;
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  const particles = [];
+
+  function addFirework(x, y){
+    const count = 90 + Math.floor(Math.random()*70);
+    for(let i=0;i<count;i++){
+      const a = Math.random()*Math.PI*2;
+      const s = 1.6 + Math.random()*5.2;
+      particles.push({
+        x, y,
+        vx: Math.cos(a)*s,
+        vy: Math.sin(a)*s,
+        life: 85 + Math.random()*35,
+        size: 1 + Math.random()*2.2
+      });
+    }
+  }
+
+  // periodic fireworks
+  setInterval(() => {
+    addFirework(Math.random()*W, H*(0.2 + Math.random()*0.45));
+  }, 700);
+
+  // tap fireworks
+  window.addEventListener("pointerdown", (e) => {
+    addFirework(e.clientX, e.clientY);
+  });
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+
+    // softer glow effect by drawing with alpha
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.035;
+      p.vx *= 0.985;
+      p.vy *= 0.985;
+      p.life -= 1;
+
+      const alpha = Math.max(0, p.life/120);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = "rgba(255,255,255,1)";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+  tick();
+</script>
+
+</body>
+</html>
